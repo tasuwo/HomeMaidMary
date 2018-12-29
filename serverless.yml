@@ -1,0 +1,23 @@
+service: HomeMaidMary
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  settings: ${file(./config.yml)}
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: us-west-2
+  role: ${self:custom.settings.role}
+  logRetentionInDays: 3
+  environment:
+    AWS_IOT_ENDPOINT: ${self:custom.settings.awsIotEndpoint}
+    TOPIC: ${self:custom.settings.topic}
+
+functions:
+  hello:
+    handler: src/index.handler
+    name: home-maid-mary
+    events:
+      - alexaSmartHome: ${self:custom.settings.applicationId}
